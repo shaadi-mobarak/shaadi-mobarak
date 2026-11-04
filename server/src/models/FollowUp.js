@@ -1,0 +1,3 @@
+import mongoose from 'mongoose';
+const s = new mongoose.Schema({ matchmaker:{type:mongoose.Schema.Types.ObjectId,ref:'User',required:true}, biodata:{type:mongoose.Schema.Types.ObjectId,ref:'Biodata',default:null}, interest:{type:mongoose.Schema.Types.ObjectId,ref:'InterestRequest',default:null}, type:{type:String,enum:['follow_up','consultation','family_call','meeting'],default:'follow_up'}, note:{type:String,required:true,maxlength:5000}, scheduledAt:{type:Date,default:null}, status:{type:String,enum:['pending','done','cancelled'],default:'pending'} }, {timestamps:true, versionKey:false});
+export default mongoose.model('FollowUp', s);

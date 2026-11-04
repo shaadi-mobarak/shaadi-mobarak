@@ -1,0 +1,3 @@
+import mongoose from 'mongoose';
+const s = new mongoose.Schema({ user:{type:mongoose.Schema.Types.ObjectId,ref:'User',default:null}, name:{type:String,required:true,trim:true,maxlength:100}, email:{type:String,required:true,trim:true,lowercase:true,maxlength:160}, subject:{type:String,required:true,trim:true,maxlength:200}, message:{type:String,required:true,maxlength:5000}, category:{type:String,enum:['general','payment','profile','technical','other'],default:'general'}, status:{type:String,enum:['open','in_progress','resolved','closed'],default:'open'}, staffReply:{type:String,maxlength:5000} }, {timestamps:true, versionKey:false});
+export default mongoose.model('SupportTicket', s);

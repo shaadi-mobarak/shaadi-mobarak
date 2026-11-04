@@ -1,0 +1,11 @@
+import express from 'express';
+import { z } from 'zod';
+import SupportTicket from '../models/SupportTicket.js';
+import { requireAuth, allowRoles } from '../middleware/auth.js';
+const router = express.Router();
+const schema = z.object({ name: z.string().trim().min(2).max(100), email: z.string().trim().email().max(160), subject: z.string().trim().min(3).max(200), message: z.string().trim().min(10).max(5000), category: z.enum(['general','payment','profile','technical','other']).optional() });
+router.post('/', async (req, res, next) => { try { const p = schema.safeParse(req.body); if (!p.success) return res.status(400).json({ message: 'Please check the form', errors: p.error.flatten() }); const doc = await SupportTicket.create({ ...p.data, user: req.auth?.sub || null }); res.status(201).json({ ticket: doc }); } catch (e) { next(e); } });
+router.get('/mine', requireAuth, async (req, res, next) => { try { const rows = await SupportTicket.find({ user: req.auth.sub }).sort('-createdAt'); res.json({ tickets: rows }); } catch (e) { next(e); } });
+router.get('/', requireAuth, allowRoles('matchmaker','admin','owner'), async (req, res, next) => { try { const rows = await SupportTicket.find().sort('-createdAt').limit(100); res.json({ tickets: rows }); } catch (e) { next(e); } });
+router.patch('/:id', requireAuth, allowRoles('matchmaker','admin','owner'), async (req, res, next) => { try { const allowed = {}; if (['open','in_progress','resolved','closed'].includes(req.body.status)) allowed.status = req.body.status; if (req.body.staffReply !== undefined) allowed.staffReply = req.body.staffReply; const doc = await SupportTicket.findByIdAndUpdate(req.params.id, allowed, { new: true }); if (!doc) return res.status(404).json({ message: 'Ticket not found' }); res.json({ ticket: doc }); } catch (e) { next(e); } });
+export default router;

@@ -1,0 +1,12 @@
+import express from 'express';
+import Payment from '../models/Payment.js';
+import Package from '../models/Package.js';
+import Membership from '../models/Membership.js';
+import Notification from '../models/Notification.js';
+import { requireAuth, allowRoles } from '../middleware/auth.js';
+const router = express.Router();
+router.post('/', requireAuth, async (req, res) => { const pkg = await Package.findById(req.body.package); if (!pkg) return res.status(404).json({ message: 'Package not found' }); const doc = await Payment.create({ user: req.auth.sub, package: pkg._id, amountBDT: pkg.priceBDT, method: req.body.method, transactionId: req.body.transactionId, receipt: req.body.receipt }); res.status(201).json({ payment: doc, note: 'Payment is pending admin approval. Package activates only after approval.' }); });
+router.get('/', requireAuth, allowRoles('admin', 'owner'), async (_req, res) => { const rows = await Payment.find().sort('-createdAt'); res.json({ payments: rows }); });
+router.get('/mine', requireAuth, async (req, res, next) => { try { const rows = await Payment.find({ user: req.auth.sub }).populate('package').sort('-createdAt'); res.json({ payments: rows }); } catch (e) { next(e); } });
+router.patch('/:id', requireAuth, allowRoles('admin','owner'), async (req, res, next) => { try { const doc = await Payment.findById(req.params.id).populate('package'); if (!doc) return res.status(404).json({ message: 'Payment not found' }); if (req.body.status) doc.status = req.body.status; if (req.body.refundNote) doc.refundNote = req.body.refundNote; await doc.save(); if (doc.status === 'approved' && doc.package) { const startsAt = new Date(); const endsAt = new Date(startsAt.getTime() + (doc.package.durationDays || 30) * 86400000); await Membership.create({ user: doc.user, package: doc.package._id, payment: doc._id, startsAt, endsAt }); await Notification.create({ user: doc.user, title: 'Payment approved', body: `Your ${doc.package.name} membership is now active.`, kind: 'payment' }); } res.json({ payment: doc }); } catch (e) { next(e); } });
+export default router;

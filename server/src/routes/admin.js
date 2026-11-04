@@ -1,0 +1,16 @@
+import express from 'express';
+import User from '../models/User.js';
+import Biodata from '../models/Biodata.js';
+import Payment from '../models/Payment.js';
+import AuditLog from '../models/AuditLog.js';
+import SiteSetting from '../models/SiteSetting.js';
+import { requireAuth, allowRoles } from '../middleware/auth.js';
+const router = express.Router();
+router.use(requireAuth, allowRoles('admin','owner'));
+router.get('/analytics', async (_req, res, next) => { try { const [users, biodatas, published, payments] = await Promise.all([User.countDocuments(), Biodata.countDocuments(), Biodata.countDocuments({ status: 'published' }), Payment.countDocuments()]); res.json({ analytics: { users, biodatas, published, payments } }); } catch (e) { next(e); } });
+router.get('/users', async (_req, res, next) => { try { const rows = await User.find().select('fullName email role accountStatus emailVerified createdAt').sort('-createdAt').limit(200); res.json({ users: rows }); } catch (e) { next(e); } });
+router.patch('/users/:id', async (req, res, next) => { try { if (String(req.params.id) === String(req.auth.sub) && (req.body.role || req.body.accountStatus)) return res.status(403).json({ message: 'You cannot change your own role or status' }); const allowed = {}; if (['member','matchmaker','admin','owner'].includes(req.body.role)) allowed.role = req.body.role; if (['pending','active','suspended'].includes(req.body.accountStatus)) allowed.accountStatus = req.body.accountStatus; const doc = await User.findByIdAndUpdate(req.params.id, allowed, { new: true }).select('fullName email role accountStatus'); if (!doc) return res.status(404).json({ message: 'User not found' }); await AuditLog.create({ actor: req.auth.sub, action: 'user_updated', targetType: 'User', targetId: req.params.id, detail: JSON.stringify(allowed) }); res.json({ user: doc }); } catch (e) { next(e); } });
+router.get('/audit', async (_req, res, next) => { try { const rows = await AuditLog.find().sort('-createdAt').limit(200); res.json({ logs: rows }); } catch (e) { next(e); } });
+router.get('/settings', async (_req, res, next) => { try { const rows = await SiteSetting.find(); res.json({ settings: rows }); } catch (e) { next(e); } });
+router.post('/settings', async (req, res, next) => { try { const doc = await SiteSetting.findOneAndUpdate({ key: req.body.key }, { value: req.body.value || '' }, { new: true, upsert: true }); res.json({ setting: doc }); } catch (e) { next(e); } });
+export default router;
