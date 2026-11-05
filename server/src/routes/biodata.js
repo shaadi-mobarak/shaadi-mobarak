@@ -1,5 +1,6 @@
 import express from 'express';
 import Biodata from '../models/Biodata.js';
+import AuditLog from '../models/AuditLog.js';
 import { requireAuth, allowRoles } from '../middleware/auth.js';
 const router = express.Router();
 // Public teasers only — no name, photo or contact. This is what the scroll cards show.
@@ -11,5 +12,5 @@ router.get('/', requireAuth, allowRoles('matchmaker','admin','owner'), async (re
 router.post('/', requireAuth, allowRoles('member', 'matchmaker', 'admin', 'owner'), async (req, res) => { if (!['bride','groom'].includes(req.body.profileType)) return res.status(400).json({ message: 'profileType must be bride or groom' }); const isOperator = ['matchmaker', 'admin', 'owner'].includes(req.auth.role); const doc = await Biodata.create({ ...req.body, ownerUser: isOperator ? (req.body.ownerUser || null) : req.auth.sub, createdBy: req.auth.sub, createdByOperator: isOperator, status: 'pending' }); res.status(201).json({ biodata: doc, note: 'Submitted for operator review. It will not publish automatically.' }); });
 // Full biodata only for operator/admin/owner — never for direct member-to-member contact.
 router.get('/:id', requireAuth, allowRoles('matchmaker', 'admin', 'owner'), async (req, res) => { const doc = await Biodata.findById(req.params.id); if (!doc) return res.status(404).json({ message: 'Biodata not found' }); res.json({ biodata: doc }); });
-router.patch('/:id/status', requireAuth, allowRoles('matchmaker', 'admin', 'owner'), async (req, res) => { if (!['pending','approved','published','rejected','hidden'].includes(req.body.status)) return res.status(400).json({ message: 'Invalid status' }); const doc = await Biodata.findByIdAndUpdate(req.params.id, { status: req.body.status, operatorNote: req.body.operatorNote }, { new: true }); if (!doc) return res.status(404).json({ message: 'Biodata not found' }); res.json({ biodata: doc }); });
+router.patch('/:id/status', requireAuth, allowRoles('matchmaker', 'admin', 'owner'), async (req, res) => { if (!['pending','approved','published','rejected','hidden'].includes(req.body.status)) return res.status(400).json({ message: 'Invalid status' }); const doc = await Biodata.findByIdAndUpdate(req.params.id, { status: req.body.status, operatorNote: req.body.operatorNote }, { new: true }); if (!doc) return res.status(404).json({ message: 'Biodata not found' }); await AuditLog.create({ actor: req.auth.sub, action: 'biodata_status', targetType: 'Biodata', targetId: req.params.id, detail: `status: ${req.body.status}` }).catch(() => {}); res.json({ biodata: doc }); });
 export default router;

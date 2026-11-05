@@ -63,6 +63,18 @@ check('interest to operator', r.status === 201);
 const interestId = r.data.interest._id;
 r = await call('PATCH', `/interests/${interestId}`, { status: 'forwarded' }, ownerCookie);
 check('operator forwards interest', r.status === 200 && r.data.interest.status === 'forwarded');
+// v39: interests list must populate human info (no bare ObjectId rows)
+r = await call('GET', '/interests', null, ownerCookie);
+check('admin interests populated with biodata + member', r.status === 200 && r.data.interests.length >= 1 && r.data.interests[0].targetBiodata && r.data.interests[0].targetBiodata.profileType === 'bride' && r.data.interests[0].targetBiodata.district === 'Chattogram' && r.data.interests[0].fromUser && r.data.interests[0].fromUser.fullName === 'Member One');
+r = await call('GET', '/interests/mine', null, memberCookie);
+check('member interests populated with biodata', r.status === 200 && r.data.interests.length >= 1 && r.data.interests[0].targetBiodata && r.data.interests[0].targetBiodata.profileType === 'bride');
+// v39: audit log is human-readable (no raw JSON detail) and records biodata status changes
+r = await call('PATCH', `/admin/users/${member._id}`, { role: 'matchmaker' }, ownerCookie);
+check('admin changes member role', r.status === 200 && r.data.user.role === 'matchmaker');
+r = await call('GET', '/admin/audit', null, ownerCookie);
+check('audit log returns actor + action + detail', r.status === 200 && r.data.logs.length >= 1 && r.data.logs[0].actor && r.data.logs[0].actor.email && r.data.logs[0].action);
+check('audit detail has no raw JSON braces', r.status === 200 && r.data.logs.every((x) => !String(x.detail || '').includes('{') && !String(x.detail || '').includes('"')));
+check('audit records biodata publish', r.status === 200 && r.data.logs.some((x) => x.action === 'biodata_status' && String(x.detail || '').includes('published')));
 r = await call('POST', '/consents', { biodata: bioId, sharedWithUser: member._id, scope: 'biodata' }, ownerCookie);
 check('consent recorded', r.status === 201);
 r = await call('GET', '/packages');
