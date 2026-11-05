@@ -13,13 +13,14 @@ function parseHash() {
 }
 function App() {
   const [route, setRoute] = React.useState(parseHash());
+  const [menuOpen, setMenuOpen] = React.useState(false);
   const [lang, setLang] = React.useState('bn');
   const [user, setUser] = React.useState(null);
   const [status, setStatus] = React.useState('Checking backend…');
   const t = { ...T[lang], lang };
   const go = (page, param) => { location.hash = param ? `#${page}/${param}` : `#${page}`; };
   React.useEffect(() => {
-    const onHash = () => setRoute(parseHash());
+    const onHash = () => { setRoute(parseHash()); setMenuOpen(false); };
     window.addEventListener('hashchange', onHash);
     api('/health').then((d) => setStatus(d.status === 'ok' ? 'Backend connected' : 'Backend response received')).catch(() => setStatus('Backend not connected yet'));
     api('/auth/me').then((d) => setUser(d.user)).catch(() => setUser(null));
@@ -52,8 +53,8 @@ function App() {
   else if (p === 'dashboard') body = !user ? <AuthPage t={t} mode="login" onDone={refreshUser} /> : user.role === 'matchmaker' ? <MatchmakerDashboard t={t} /> : (user.role === 'admin' || user.role === 'owner') ? <AdminDashboard t={t} /> : <MemberDashboard t={t} user={user} />;
   else body = <Home t={t} go={go} />;
   return <div className="app-shell">
-    <div className="wg-topstrip"><span>Shaadi Mobarak · Marriage Media</span><span>+880 1843-253756 · bd.shaadimobarak@gmail.com</span></div>
-    <header className="topbar"><a className="brand" href="#home"><img className="brand-logo" src="/logo.png" alt="Shaadi Mobarak" /><span><img className="brand-name-img" src="/name-ornate.png" alt="Shaadi Mobarak" /><small>শাদি মোবারক · Marriage Media</small></span></a><nav>{nav.map(([k, label]) => <a key={k} href={`#${k}`}>{label}</a>)}</nav><button onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}>{lang === 'bn' ? 'EN' : 'বাংলা'}</button>{user ? <><button onClick={() => go('dashboard')}>{t.dashboard}</button><button onClick={logout}>{t.logout}</button></> : <><button onClick={() => go('login')}>{t.login}</button><button onClick={() => go('register')}>{t.register}</button></>}</header>
+    <div className="wg-topstrip"><span>Shaadi Mobarak · Marriage Media</span><span><a href="tel:+8801843253756">+880 1843-253756</a> · <a href="mailto:bd.shaadimobarak@gmail.com">bd.shaadimobarak@gmail.com</a></span></div>
+    <header className="topbar"><a className="brand" href="#home"><img className="brand-logo" src="/logo.png" alt="Shaadi Mobarak" /><span><img className="brand-name-img" src="/name-ornate.png" alt="Shaadi Mobarak" /><small>শাদি মোবারক · Marriage Media</small></span></a><button className="menu-btn" aria-label="Menu" onClick={() => setMenuOpen(!menuOpen)}>☰</button><nav className={menuOpen ? 'open' : ''}>{nav.map(([k, label]) => <a key={k} href={`#${k}`}>{label}</a>)}</nav><button onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}>{lang === 'bn' ? 'EN' : 'বাংলা'}</button>{user ? <><button onClick={() => go('dashboard')}>{t.dashboard}</button><button onClick={logout}>{t.logout}</button></> : <><button onClick={() => go('login')}>{t.login}</button><button onClick={() => go('register')}>{t.register}</button></>}</header>
     <main>{body}</main>
     <footer><div><b>Support</b><br />+880 1843-253756 · bd.shaadimobarak@gmail.com<br />{t.office}</div><span>© {new Date().getFullYear()} Shaadi Mobarak. All rights reserved.</span><span><a href="#privacy">{t.privacy}</a> · <a href="#terms">{t.terms}</a> · <a href="#contact">{t.contact}</a></span><span className="api-status"><i /> {status}</span></footer>
   </div>;

@@ -258,3 +258,80 @@ footer{background:linear-gradient(180deg,#2a0308,#1a0208)!important}
 .wg-hero-headline{display:none!important}
 .wg-hero{height:auto!important;min-height:0!important;max-height:none!important;aspect-ratio:3/2!important;padding:0!important;background:url('/hero-1.jpg') center/cover no-repeat!important}
 @media(max-width:900px){.wg-hero{aspect-ratio:3/2!important;min-height:0!important}}
+
+/* V32: Mobile responsive repair — Red Velvet + Metallic Gold theme and hero image UNCHANGED.
+   Fixes only layout/spacing/overflow on small screens. No content, price or claim changed. */
+.wg-topstrip a{color:inherit;text-decoration:none}
+.wg-topstrip a:hover{text-decoration:underline}
+/* Compact mobile menu button (hidden on desktop) */
+.menu-btn{display:none}
+.topbar{position:relative}
+
+@media(max-width:900px){
+  /* 3. Top contact bar: clean stacked lines, no awkward wrap, no overflow */
+  .wg-topstrip{flex-direction:column!important;align-items:center!important;gap:2px!important;padding:8px 4%!important;font-size:12px!important;line-height:1.6!important;text-align:center}
+  .wg-topstrip span{white-space:normal!important}
+  /* 4. Header: compact, logo visible, no overlap */
+  .topbar{flex-wrap:nowrap!important;height:auto!important;min-height:60px!important;padding:8px 4%!important;gap:8px!important}
+  .brand{gap:8px!important;flex:1;min-width:0}
+  .brand-logo{width:44px!important;height:44px!important;flex:none}
+  .brand-name-img{height:32px!important;max-width:150px!important;object-fit:contain}
+  .brand small{font-size:12px!important}
+  .topbar button{padding:7px 10px!important;font-size:12px!important;white-space:nowrap}
+  .menu-btn{display:inline-flex!important;align-items:center;justify-content:center;width:38px;height:38px;padding:0!important;font-size:20px!important;line-height:1}
+  /* Mobile nav: hidden until hamburger opens it; full-width dropdown under the header */
+  .topbar nav{display:none!important}
+  .topbar nav.open{display:flex!important;flex-direction:column!important;position:absolute;top:100%;left:0;right:0;z-index:60;background:linear-gradient(180deg,#fffdf6,#f7eec8);border-bottom:3px solid #d4af37;padding:6px 5% 12px;gap:0!important;width:100%!important;overflow-x:visible!important;white-space:normal!important;box-shadow:0 18px 30px rgba(0,0,0,.25)}
+  .topbar nav.open a{display:block;padding:11px 2px!important;border-bottom:1px solid #e6dac8;font-size:15px!important}
+  /* 5. Profile card: compact, balanced, not excessively tall */
+  .wg-hero-row{padding:12px 4%!important;gap:12px!important}
+  .wg-profile-opt{padding:16px 14px!important;gap:8px!important}
+  .wg-profile-opt img{width:84px!important;height:84px!important}
+  .wg-profile-opt b{font-size:16px!important}
+  .wg-profile-opt button{padding:10px 12px!important}
+  /* 6. Enquire form: fits width, consistent 44px inputs, full-width button */
+  .wg-form{padding:18px 14px!important}
+  .wg-form h3{margin:0 0 8px!important;font-size:18px!important}
+  .wg-form input,.wg-form select{height:44px!important;padding:10px 12px!important;margin:5px 0!important;font-size:16px!important;border-radius:6px}
+  .wg-form button{width:100%!important;min-height:44px!important}
+  /* 7. Trust cards: stack neatly, equal feel, readable */
+  .wg-feat{flex-direction:column!important;align-items:center!important;gap:12px!important}
+  .wg-feat div{width:100%!important;max-width:360px!important;padding:16px!important}
+  .wg-feat div b{font-size:15px!important}
+  .wg-feat div p{font-size:13px!important;margin:6px 0 0!important}
+  /* 8. Other sections: no overflow, balanced spacing */
+  .content-section{padding:36px 4%!important}
+  .content-section h2{font-size:26px!important;line-height:1.3}
+  .price-row{flex-wrap:wrap!important;gap:8px!important;padding:12px!important}
+  .price-row small{font-size:12px!important;line-height:1.6}
+  .price-row strong{font-size:18px!important}
+  .price-scroll-inner{padding:12px!important}
+  .teaser-card{padding:24px 18px 20px!important;outline-offset:5px!important}
+  .teaser-card .crown{font-size:24px!important}
+  .wg-about-photo{height:200px!important;min-width:0!important;width:100%}
+  .wg-strip>div{padding:16px!important}
+  .wg-strip a{color:#fff}
+  .live-ticker{font-size:13px!important}
+  footer{padding:16px 5%!important;font-size:12px!important}
+  footer span{overflow-wrap:anywhere}
+  .form-grid input,.form-grid select,.form-grid textarea{font-size:16px!important}
+  .form-grid .primary{min-height:44px}
+}
+@media(max-width:560px){
+  /* Narrowest phones: header stays one compact row, hero keeps 3/2 landscape */
+  .topbar{gap:6px!important}
+  .brand-name-img{height:28px!important;max-width:120px!important}
+  .brand small{font-size:11px!important}
+  .brand-logo{width:40px!important;height:40px!important}
+  .topbar button{padding:6px 8px!important;font-size:11px!important}
+  .wg-hero{aspect-ratio:3/2!important}
+  .wg-profile-opt img{width:76px!important;height:76px!important}
+  .wg-feat div{padding:14px!important}
+  .content-section h2{font-size:24px!important}
+  .wg-intro{padding:28px 5%!important}
+  .wg-intro h2{font-size:28px!important}
+}
+@media(min-width:901px){
+  /* Desktop: keep the approved desktop header/hero exactly as they are */
+  .menu-btn{display:none!important}
+}
