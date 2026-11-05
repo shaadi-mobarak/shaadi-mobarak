@@ -19,6 +19,7 @@ import adminRoutes from './routes/admin.js';
 import membershipsRoutes from './routes/memberships.js';
 import followupsRoutes from './routes/followups.js';
 import uploadsRoutes from './routes/uploads.js';
+import SiteSetting from './models/SiteSetting.js';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -37,6 +38,16 @@ app.use(express.json({ limit: '100kb' }));
 app.use(cookieParser());
 app.use('/api/auth', rateLimit({ windowMs: 15 * 60 * 1000, limit: 30, standardHeaders: 'draft-7', legacyHeaders: false }), authRoutes);
 app.use('/api/health', healthRoutes);
+// Public site status (always reachable, so the frontend can show a maintenance banner).
+app.get('/api/site-status', async (_req, res) => { try { const s = await SiteSetting.findOne({ key: 'maintenanceMode' }); res.json({ maintenance: s ? String(s.value).trim().toLowerCase() === 'true' : false }); } catch { res.json({ maintenance: false }); } });
+// Maintenance mode (owner setting key "maintenanceMode" = "true"):
+// public API calls return 503; health, site-status, auth and admin stay reachable
+// so the owner can log in and switch it off again. Fails open if the DB is unreachable.
+app.use('/api', async (req, res, next) => {
+  if (req.path.startsWith('/admin') || req.path.startsWith('/auth')) return next();
+  try { const s = await SiteSetting.findOne({ key: 'maintenanceMode' }); if (s && String(s.value).trim().toLowerCase() === 'true') return res.status(503).json({ message: 'The website is under maintenance. Please try again later.', maintenance: true }); } catch { /* fail open */ }
+  next();
+});
 app.use('/api/packages', packageRoutes);
 app.use('/api/biodata', biodataRoutes);
 app.use('/api/interests', interestRoutes);

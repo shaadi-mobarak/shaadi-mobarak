@@ -111,6 +111,67 @@ r = await call('PATCH', `/support/${ticketId}`, { staffReply: 'We will call you 
 check('support ticket staff reply saved', r.status === 200 && r.data.ticket.staffReply === 'We will call you tomorrow.' && r.data.ticket.status === 'in_progress');
 r = await call('GET', '/support', null, ownerCookie);
 check('staff reply visible in admin ticket list', r.status === 200 && r.data.tickets.some((x) => String(x._id) === String(ticketId) && x.staffReply === 'We will call you tomorrow.'));
+// --- v37: content management (admin list / edit / hide / delete) ---
+r = await call('GET', '/content/all', null, ownerCookie);
+check('admin content list includes created FAQ', r.status === 200 && r.data.items.some((x) => x.title === 'Test FAQ'));
+const contentId = r.data.items.find((x) => x.title === 'Test FAQ')._id;
+r = await call('GET', '/content/all', null, memberCookie);
+check('member blocked from admin content list (403)', r.status === 403);
+r = await call('PATCH', `/content/${contentId}`, { title: 'Test FAQ Updated', isActive: false }, ownerCookie);
+check('admin edits content', r.status === 200 && r.data.item.title === 'Test FAQ Updated');
+r = await call('GET', '/content?type=faq');
+check('inactive content hidden from public list', r.status === 200 && !r.data.items.some((x) => x.title === 'Test FAQ Updated'));
+r = await call('POST', '/content', { type: 'banner', title: 'Eid Offer', body: 'Special announcement' }, ownerCookie);
+check('admin creates banner content', r.status === 201);
+const bannerId = r.data.item._id;
+r = await call('GET', '/content?type=banner');
+check('public banner content readable', r.status === 200 && r.data.items.some((x) => x.title === 'Eid Offer'));
+r = await call('DELETE', `/content/${contentId}`, null, ownerCookie);
+check('admin deletes content', r.status === 200);
+r = await call('DELETE', `/content/${bannerId}`, null, ownerCookie);
+check('admin deletes banner content', r.status === 200);
+// --- v37: website settings (save / upsert / list / delete) ---
+r = await call('POST', '/admin/settings', { key: 'siteAnnouncement', value: 'Welcome to Shaadi Mobarak' }, ownerCookie);
+check('admin saves setting', r.status === 200 && r.data.setting.value === 'Welcome to Shaadi Mobarak');
+r = await call('GET', '/admin/settings', null, ownerCookie);
+check('admin settings list readable', r.status === 200 && r.data.settings.some((x) => x.key === 'siteAnnouncement'));
+r = await call('POST', '/admin/settings', { key: 'siteAnnouncement', value: 'Updated announcement' }, ownerCookie);
+check('setting upsert updates value', r.status === 200 && r.data.setting.value === 'Updated announcement');
+r = await call('DELETE', '/admin/settings/siteAnnouncement', null, ownerCookie);
+check('admin deletes setting', r.status === 200);
+r = await call('GET', '/admin/settings', null, ownerCookie);
+check('deleted setting gone', r.status === 200 && !r.data.settings.some((x) => x.key === 'siteAnnouncement'));
+r = await call('POST', '/admin/settings', { key: 'x', value: 'y' }, memberCookie);
+check('member blocked from saving settings (403)', r.status === 403);
+// --- v37: audit log + notifications (admin view) ---
+r = await call('GET', '/admin/audit', null, ownerCookie);
+check('admin audit log readable with actor', r.status === 200 && r.data.logs.length >= 1 && r.data.logs.some((x) => x.action === 'user_updated'));
+r = await call('GET', '/admin/audit', null, memberCookie);
+check('member blocked from audit log (403)', r.status === 403);
+r = await call('GET', '/notifications', null, memberCookie);
+check('member sees payment-approved notification', r.status === 200 && r.data.notifications.some((x) => x.title === 'Payment approved'));
+r = await call('GET', '/admin/notifications', null, ownerCookie);
+check('admin notifications list readable', r.status === 200 && r.data.notifications.some((x) => x.title === 'Payment approved'));
+// --- v37: enquiry fields persist (looking for + phone + city + country) ---
+r = await call('POST', '/support', { name: 'Enquirer', email: 'enq@test.local', subject: 'Enquiry', category: 'general', message: 'Phone: 01700000000 | City: Dhaka | Country: Bangladesh | Looking for: bride' });
+check('enquiry with all fields stored', r.status === 201 && r.data.ticket.message.includes('Looking for: bride') && r.data.ticket.message.includes('01700000000'));
+// --- v37: maintenance mode ---
+r = await call('POST', '/admin/settings', { key: 'maintenanceMode', value: 'true' }, ownerCookie);
+check('maintenance mode switched on', r.status === 200);
+r = await call('GET', '/site-status');
+check('site-status reports maintenance', r.status === 200 && r.data.maintenance === true);
+r = await call('GET', '/packages');
+check('public API returns 503 in maintenance', r.status === 503 && r.data.maintenance === true);
+r = await call('GET', '/health');
+check('health stays up in maintenance', r.status === 200);
+r = await call('GET', '/admin/users', null, ownerCookie);
+check('admin API stays open in maintenance', r.status === 200);
+r = await call('POST', '/admin/settings', { key: 'maintenanceMode', value: 'false' }, ownerCookie);
+check('maintenance mode switched off', r.status === 200);
+r = await call('GET', '/packages');
+check('public API works again after maintenance off', r.status === 200);
+r = await call('DELETE', '/admin/settings/maintenanceMode', null, ownerCookie);
+check('maintenance setting cleaned up', r.status === 200);
 r = await call('POST', '/auth/logout', {}, memberCookie);
 check('logout works', r.status === 200);
 r = await call('GET', '/auth/me');

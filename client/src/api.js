@@ -3,7 +3,7 @@ const API = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'ht
 export async function api(path, opts = {}) {
   const res = await fetch(`${API}${path}`, { credentials: 'include', headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) }, ...opts, body: opts.body ? JSON.stringify(opts.body) : undefined });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.message || 'Request failed');
+  if (!res.ok) { const err = new Error(data.message || 'Request failed'); err.status = res.status; err.maintenance = !!data.maintenance; throw err; }
   return data;
 }
 export function apiForm(path, formData) {
