@@ -7,6 +7,7 @@ export const DEFAULT_PACKAGES = [
   { name: 'Gold', priceBDT: 5000, durationDays: 180, proposals: 25, meetings: 5, features: ['২৫টি প্রস্তাব', 'প্রায়োরিটি লিস্টিং', 'বায়োডাটা PDF', '৫টি মিটিং'], sortOrder: 3 },
   { name: 'Platinum', priceBDT: 6000, durationDays: 365, proposals: 50, meetings: 10, features: ['৫০টি প্রস্তাব', 'বেশি মিটিং ব্যবস্থা', 'অগ্রাধিকার সাপোর্ট'], sortOrder: 4 },
   { name: 'Elite Assisted', priceBDT: 15000, durationDays: 365, proposals: 100, meetings: 20, features: ['পার্সোনাল ম্যাচমেকার', 'অফলাইন সাপোর্ট', 'সর্বোচ্চ অগ্রাধিকার'], sortOrder: 5 },
+  { name: 'Royal', priceBDT: 20000, durationDays: 365, proposals: 150, meetings: 30, features: ['ভিআইপি পার্সোনাল ম্যাচমেকার', 'অফলাইন সাপোর্ট', 'সর্বোচ্চ অগ্রাধিকার', 'ফ্যামিলি মিটিং ব্যবস্থা'], sortOrder: 6 },
 ];
 const packageSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true },

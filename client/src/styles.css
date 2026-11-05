@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=Noto+Serif+Bengali:wght@400;600;700&display=swap');
-:root{font-family:'Hind Siliguri','Noto Serif Bengali',sans-serif;color:#2c2021;background:#faf7f2;font-synthesis:none}*{box-sizing:border-box}body{margin:0}.app-shell{max-width:1440px;margin:auto;background:#fffdf9;min-height:100vh}.topbar{height:86px;padding:0 7%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eee4d8;background:#fffdf9}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#4b1425}.brand-mark{width:43px;height:43px;border:1px solid #b88b45;border-radius:50%;display:grid;place-items:center;font-size:22px;color:#a77b36}.brand b{display:block;font:600 18px 'Playfair Display',serif}.brand small{display:block;font-size:11px;color:#876b63}nav{display:flex;gap:30px}nav a{color:#624b49;text-decoration:none;font-size:14px}.login-btn{border:1px solid #9b7138;background:transparent;color:#5a1d30;padding:10px 18px;border-radius:3px;font:600 13px inherit;cursor:pointer}
+@import url('https://fonts.googleapis.com/css2?family=Herr+Von+Muellerhoff&family=Marcellus&family=Cormorant+Garamond:wght@500;600;700&family=Great+Vibes&family=Hind+Siliguri:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=Noto+Serif+Bengali:wght@400;600;700&display=swap');
+:root{font-family:'Hind Siliguri','Noto Serif Bengali',sans-serif;color:#2c2021;background:#faf7f2;font-synthesis:none}*{box-sizing:border-box}body{margin:0}.app-shell{max-width:1440px;margin:auto;background:#fffdf9;min-height:100vh}.topbar{height:86px;padding:0 7%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eee4d8;background:#fffdf9}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#4b1425}.brand-mark{width:43px;height:43px;border:1px solid #b88b45;border-radius:50%;display:grid;place-items:center;font-size:22px;color:#a77b36}.brand-logo{width:58px;height:58px;border-radius:50%;object-fit:cover;border:2px solid #e6c87a}.brand b{display:block;font:700 40px 'Herr Von Muellerhoff','Playfair Display','Noto Serif Bengali',cursive;letter-spacing:.5px;background:linear-gradient(180deg,#fff2b0,#c9a66b);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}.brand small{display:block;font-size:15px;color:#876b63;font-family:'Noto Serif Bengali',serif}nav{display:flex;gap:30px}nav a{color:#624b49;text-decoration:none;font-size:14px}.login-btn{border:1px solid #9b7138;background:transparent;color:#5a1d30;padding:10px 18px;border-radius:3px;font:600 13px inherit;cursor:pointer}
 .eyebrow{letter-spacing:2px;font-size:11px;color:#a47a3b;font-weight:700}
 .hero-actions{display:flex;gap:13px;margin-top:28px;flex-wrap:wrap}.primary,.secondary{padding:12px 19px;text-decoration:none;border:none;border-radius:3px;font-weight:600;font-size:14px;display:inline-flex;gap:9px;align-items:center;cursor:pointer}.primary{background:#561b30;color:#fff}.secondary{border:1px solid #c7ad86;color:#5c2736;background:transparent}
 /* Palace hero — uses the generated palace entrance photo */
-.palace-hero{min-height:620px;padding:70px 9%;display:flex;align-items:center;color:#fff;background:linear-gradient(90deg,rgba(27,6,16,.92) 0%,rgba(39,9,23,.72) 55%,rgba(39,9,23,.25) 100%),url('/wedding-hero.jpg') center/cover;position:relative}
+.palace-hero{min-height:620px;padding:70px 9%;display:flex;align-items:center;color:#fff;background:linear-gradient(90deg,rgba(27,6,16,.92) 0%,rgba(39,9,23,.72) 55%,rgba(39,9,23,.25) 100%),url('/hero-1.jpg') center/cover;position:relative}
 .palace-hero-copy{max-width:680px}.palace-hero-copy .eyebrow{color:#ead5a8}.palace-hero h1{font-size:clamp(38px,5vw,62px);line-height:1.25;margin:20px 0}.palace-hero h1 em{font-family:'Playfair Display','Noto Serif Bengali',serif;color:#ead5a8;font-style:normal}.palace-hero-copy>p{max-width:560px;color:#e8dcc6;line-height:2;font-size:16px}
 .palace-search{margin-top:28px;background:#fffdf8;color:#241a1b;padding:16px;border:1px solid #c9a66b;display:flex;gap:12px;flex-wrap:wrap;align-items:end;box-shadow:0 18px 40px #00000044}.palace-search label{font-size:12px;color:#776b68;display:grid;gap:6px}.palace-search select{padding:10px;border:1px solid #e6dac8;font:inherit}
 .feature-strip{display:grid;grid-template-columns:repeat(4,1fr);padding:28px 8%;gap:20px;border-bottom:1px solid #eee5db}.feature-strip div{display:grid;grid-template-columns:32px 1fr;column-gap:10px;align-items:center}.feature-strip svg{grid-row:span 2;color:#a77b36}.feature-strip b{font-size:14px;color:#542238}.feature-strip small{font-size:11px;color:#89766d}
@@ -65,12 +65,196 @@ footer{background:#16040a!important;border-top:3px double #e6c87a}
 .primary{background:#e91e63!important;color:#fff!important}
 .teaser-card{background:#fff!important;border:2px solid #e6a8b8!important;outline:none!important;box-shadow:0 14px 30px #00000022!important;color:#333!important}
 .teaser-card h3{color:#7a1f2e!important}.teaser-card p{color:#776b68!important}.teaser-card .corner,.teaser-card .crown,.teaser-card .ornate-line{color:#e91e63!important}
-.wg-hero{display:flex;flex-wrap:wrap}.wg-collage{flex:2;min-width:300px;display:grid;grid-template-columns:1fr 1fr 1fr;min-height:420px}
-.wg-panel{background-image:url('/wedding-hero.jpg');background-size:cover}.wg-panel.p1{background-position:left center}.wg-panel.p2{background-position:center}.wg-panel.p3{background-position:right center}
+.wg-hero{display:flex;flex-wrap:wrap;min-height:640px}.wg-profile-opt{flex:1;min-width:220px;max-width:280px;background:#4a1020;color:#f3e3b0;padding:24px 18px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;justify-content:center}.wg-profile-opt img{width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid #e6c87a}.wg-profile-opt b{font-size:18px}.wg-profile-opt button{background:#e91e63;color:#fff;border:none;padding:10px 16px;border-radius:3px;cursor:pointer;width:100%;font-weight:600}.live-ticker{background:#4a1020;color:#f3e3b0;padding:12px 0;font-size:15px;border-top:3px double #e6c87a;border-bottom:3px double #e6c87a}.live-ticker b{color:#fff}.wg-hero-photo{flex:3;min-width:320px;min-height:640px;background:url('/hero-1.jpg') center/cover}
 .wg-form{flex:1;min-width:280px;background:#1e050f;color:#fff;padding:24px}.wg-form h3{margin:0 0 12px}.wg-form input,.wg-form select{width:100%;padding:11px;margin:6px 0}.wg-form button{width:100%}.wg-note{font-size:12px;line-height:1.7;color:#ddd}
 .wg-intro{background:#fdeef2;padding:36px 8%;text-align:center;line-height:1.9}.wg-intro h2{color:#7a1f2e}.wg-feat{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:16px}.wg-feat div{background:#fff;border:1px solid #e6a8b8;padding:18px;width:230px}
-.wg-services{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}.wg-card{width:220px;border:1px solid #e6a8b8;padding:16px;text-align:center;background:#fff}.wg-card-photo{background-image:url('/wedding-hero.jpg');background-size:cover;background-position:center;height:130px}.wg-about-photo{height:260px;min-width:280px;flex:1}.wg-about{display:flex;gap:24px;max-width:960px;margin:0 auto;flex-wrap:wrap;align-items:center;text-align:left}
+.wg-services{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}.wg-card{width:220px;border:1px solid #e6a8b8;padding:16px;text-align:center;background:#fff}.wg-card-photo{background-size:cover;background-position:center;height:130px}.wg-card-photo.s1{background-image:url('/service-1.jpg')}.wg-card-photo.s2{background-image:url('/service-2.jpg')}.wg-card-photo.s3{background-image:url('/service-3.jpg')}.wg-card-photo.s4{background-image:url('/service-4.jpg')}.wg-card-photo.s5{background-image:url('/service-5.jpg')}.wg-card-photo.s6{background-image:url('/service-6.jpg')}.wg-card-photo.s7{background-image:url('/hero-2.jpg')}.wg-card-photo.s8{background-image:url('/hero-3.jpg')}.wg-card-photo.s9{background-image:url('/family-guidance.jpg')}.wg-about-photo{height:260px;min-width:280px;flex:1;background-image:url('/family-guidance.jpg')}.wg-about{display:flex;gap:24px;max-width:960px;margin:0 auto;flex-wrap:wrap;align-items:center;text-align:left}
 .wg-pink{background:#fdf2f5!important}
 .wg-strip{background:#e91e63;color:#fff;display:flex;flex-wrap:wrap}.wg-strip>div{flex:1;min-width:220px;background:#d81b60;padding:20px;text-align:center}.wg-strip button{background:#fff;color:#d81b60;border:0;padding:8px 14px;margin-top:8px;cursor:pointer}
 footer{background:#000!important;color:#ccc!important;border-top:none!important}footer a{color:#fff!important}
-@media(max-width:760px){.wg-collage{grid-template-columns:1fr 1fr 1fr;min-height:260px}.wg-topstrip{padding:9px 5%}}
+@media(max-width:760px){.wg-hero-photo{min-height:260px}.wg-topstrip{padding:9px 5%}}
+
+.wg-intro h2{font:700 clamp(34px,5vw,54px) 'Playfair Display','Noto Serif Bengali',serif;background:linear-gradient(180deg,#8a6a1f,#c9a66b);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+/* V16: Bridal Red + Gold metallic wedding theme (replaces green) + 3D cards + big responsive hero */
+:root{--emerald:#7f0e1e;--emerald2:#a4133c;--gold:#d4af37;--gold2:#f7e7a8;--gold3:#c9a66b;--bridal:#8b1e2e;--ivory:#fffdf6}
+body{background:var(--ivory)}
+.app-shell{background:var(--ivory)!important}
+.wg-topstrip{background:linear-gradient(90deg,#3d050d,#7f0e1e,#3d050d)!important;color:#f7e7a8!important}
+.topbar{background:linear-gradient(180deg,#fffdf6,#f7eec8)!important;border-bottom:3px solid var(--gold)!important}
+.topbar .brand{color:var(--emerald)}
+.topbar .brand small{color:#5a6b5f!important}
+.topbar nav a{color:var(--emerald)!important;font-family:'Marcellus','Noto Serif Bengali',serif!important;font-size:15px!important;letter-spacing:.4px}
+.topbar button{background:linear-gradient(180deg,#f7e7a8,#d4af37)!important;color:#3d050d!important;border:1px solid #b8860b!important;font-family:'Marcellus',serif!important}
+.content-section h2{color:var(--emerald)!important;font-family:'Marcellus','Cormorant Garamond','Noto Serif Bengali',serif!important;letter-spacing:1px}
+.wg-intro{background:linear-gradient(180deg,#f3ead0,#fffdf6)!important}
+.wg-intro h2{background:linear-gradient(180deg,#7f0e1e,#a4133c 55%,#d4af37)!important;-webkit-background-clip:text!important;background-clip:text!important}
+.brand b{font-family:'Herr Von Muellerhoff','Marcellus','Noto Serif Bengali',cursive!important;background:linear-gradient(180deg,#fff2b0,#d4af37 45%,#b8860b)!important;-webkit-background-clip:text!important;background-clip:text!important}
+h1,h2,h3{font-family:'Marcellus','Cormorant Garamond','Noto Serif Bengali',serif}
+/* 3D metallic cards: service, teaser, feature, steps */
+.wg-card,.wg-feat div,.steps article,.teaser-card{transform:perspective(900px) rotateX(2deg);transition:transform .35s ease,box-shadow .35s ease!important;border-radius:14px!important;box-shadow:0 2px 0 #fff inset,0 -2px 0 #b8860b inset,0 18px 34px rgba(127,14,30,.28),0 4px 10px rgba(0,0,0,.18)!important;border:2px solid transparent!important;background:linear-gradient(#fffdf6,#fffdf6) padding-box,linear-gradient(135deg,#f7e7a8,#d4af37 30%,#fff8dc 50%,#b8860b 70%,#f7e7a8) border-box!important}
+.wg-card:hover,.wg-feat div:hover,.steps article:hover,.teaser-card:hover{transform:perspective(900px) rotateX(0deg) translateY(-8px)!important;box-shadow:0 2px 0 #fff inset,0 28px 46px rgba(127,14,30,.35),0 6px 14px rgba(0,0,0,.2)!important}
+.wg-card-photo{border-radius:10px 10px 0 0!important;box-shadow:inset 0 0 0 1px #d4af37}
+.wg-card b{color:var(--emerald);font-family:'Marcellus','Noto Serif Bengali',serif}
+.primary{background:linear-gradient(180deg,#f7e7a8,#d4af37)!important;color:#3d050d!important;border:1px solid #b8860b!important;box-shadow:0 8px 20px rgba(184,134,11,.45)!important;font-family:'Marcellus',serif!important}
+/* Hero: big landing, responsive */
+.wg-hero{min-height:min(92vh,860px)!important;display:grid!important;grid-template-columns:280px 1fr 340px!important;align-items:stretch}
+.wg-profile-opt{background:linear-gradient(180deg,#7f0e1e,#3d050d)!important}
+.wg-profile-opt button{background:linear-gradient(180deg,#f7e7a8,#d4af37)!important;color:#3d050d!important}
+.wg-hero-photo{min-height:min(92vh,860px)!important}
+.wg-form{background:linear-gradient(180deg,#3d050d,#7f0e1e)!important}
+.live-ticker{background:linear-gradient(90deg,#3d050d,#7f0e1e,#3d050d)!important}
+.wg-strip{background:var(--emerald)!important}.wg-strip>div{background:#8b1e2e!important}
+.wg-pink{background:#f3ead0!important}
+footer{background:#3d050d!important}
+@media(max-width:1180px){.wg-hero{grid-template-columns:240px 1fr 300px!important;min-height:720px!important}.wg-hero-photo{min-height:720px!important}}
+@media(max-width:900px){.wg-hero{display:flex!important;flex-direction:column!important;min-height:0!important}.wg-hero-photo{order:-1;min-height:62vh!important;width:100%}.wg-profile-opt{max-width:none!important;width:100%}.wg-form{width:100%}.topbar{flex-wrap:wrap;height:auto!important;padding:12px 5%!important}.topbar nav{display:flex!important;gap:14px!important;overflow-x:auto;white-space:nowrap;width:100%;padding:8px 0}.content-section{padding:48px 5%!important}.content-section h2{font-size:28px!important}.wg-intro h2{font-size:32px!important}}
+@media(max-width:760px){.wg-hero-photo{min-height:52vh!important}.wg-card{width:100%!important;max-width:340px}.teaser-grid{grid-template-columns:1fr!important}.brand b{font-size:24px!important}}
+
+/* V17: TRUE full-screen hero — photo covers whole viewport, headline + panels float over it */
+.wg-hero{position:relative!important;min-height:100svh!important;display:flex!important;flex-direction:column!important;justify-content:flex-end!important;padding:56px 5% 40px!important;background:linear-gradient(180deg,rgba(61,5,13,.15) 0%,rgba(61,5,13,.35) 45%,rgba(61,5,13,.88) 100%),url('/hero-1.jpg') center/cover no-repeat!important}
+.wg-hero-photo{display:none!important}
+.wg-hero-headline{text-align:center;color:#fff;margin-bottom:36px}
+.wg-hero-script{font-family:'Great Vibes',cursive!important;font-size:clamp(28px,4vw,44px);color:#f7e7a8;display:block}
+.wg-hero-headline h1{font-family:'Herr Von Muellerhoff','Marcellus','Noto Serif Bengali',cursive!important;font-size:clamp(76px,13vw,150px)!important;font-weight:700!important;line-height:1.05;margin:8px 0 4px;background:linear-gradient(180deg,#fff8dc,#f7e7a8 40%,#d4af37)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;text-shadow:0 4px 30px rgba(0,0,0,.35)}
+.wg-hero-bn{font-family:'Noto Serif Bengali',serif!important;font-size:clamp(22px,3vw,34px);color:#f7e7a8;margin:0}
+.wg-hero-tag{font-size:clamp(15px,2vw,19px);color:#fff;line-height:1.8;margin:10px auto 0;max-width:640px}
+.wg-hero-row{display:flex;gap:24px;justify-content:space-between;align-items:stretch}
+.wg-profile-opt{flex:0 0 280px;background:rgba(61,5,13,.82)!important;backdrop-filter:blur(6px);border:2px solid #d4af37!important;border-radius:14px}
+.wg-form{flex:0 0 360px;background:rgba(20,2,6,.85)!important;backdrop-filter:blur(6px);border:2px solid #d4af37!important;border-radius:14px}
+@media(max-width:900px){.wg-hero{min-height:100svh!important;padding:40px 5% 28px!important}.wg-hero-row{flex-direction:column!important}.wg-profile-opt,.wg-form{flex:none!important;width:100%!important}.wg-hero-headline h1{font-size:clamp(44px,13vw,72px)!important}}
+
+/* V18: Royal Pink + Red + Gold theme (Feri's choice) with emerald as small accent only */
+.wg-topstrip{background:linear-gradient(90deg,#7f0e1e,#c2185b,#7f0e1e)!important}
+.wg-profile-opt{background:linear-gradient(180deg,#7f0e1e,#c2185b)!important}
+.wg-form{background:linear-gradient(180deg,#3d050d,#7f0e1e)!important}
+.live-ticker{background:linear-gradient(90deg,#7f0e1e,#c2185b,#7f0e1e)!important}
+.wg-strip{background:#c2185b!important}.wg-strip>div{background:#a4133c!important}
+.wg-intro{background:linear-gradient(180deg,#fdeef2,#fffdf6)!important}
+.wg-feat div{border-top:4px solid #0b6e4f!important}
+.feature-strip svg{color:#0b6e4f!important}
+.steps i{color:#c2185b!important}
+.teaser-card .crown,.teaser-card .corner,.teaser-card .ornate-line{color:#c2185b!important}
+footer{background:#3d050d!important}
+
+/* V19: Royal Pink + Red + Brass-Gold metallic theme (Feri's final choice) — every colour metallic 3D */
+.wg-topstrip{background:linear-gradient(135deg,#8e0e3a,#c2185b 40%,#a4133c 70%,#b08d57)!important}
+.topbar{background:linear-gradient(180deg,#fff8f0,#f7e3c8 60%,#e8c88a)!important;border-bottom:3px solid #b08d57!important}
+.topbar nav a{color:#8e0e3a!important}
+.wg-profile-opt{background:linear-gradient(160deg,#c2185b,#8e0e3a 55%,#a4133c)!important;border:2px solid #b08d57!important;box-shadow:0 18px 34px rgba(142,14,58,.4),inset 0 1px 0 rgba(255,255,255,.4)!important}
+.wg-profile-opt button{background:linear-gradient(180deg,#f7e7a8,#d4af37 45%,#b08d57)!important;color:#3d050d!important}
+.wg-form{background:linear-gradient(180deg,#3d050d,#8e0e3a)!important;border:2px solid #b08d57!important}
+.live-ticker{background:linear-gradient(90deg,#8e0e3a,#c2185b,#a4133c,#b08d57)!important}
+.wg-strip{background:linear-gradient(90deg,#c2185b,#a4133c)!important}.wg-strip>div{background:linear-gradient(180deg,#a4133c,#8e0e3a)!important}
+.wg-intro{background:linear-gradient(180deg,#fdeef2,#fff8f0 60%,#f7e3c8)!important}
+.wg-intro h2{background:linear-gradient(180deg,#c2185b,#a4133c 55%,#b08d57)!important;-webkit-background-clip:text!important;background-clip:text!important}
+.content-section h2{color:#8e0e3a!important}
+.brand b{background:linear-gradient(180deg,#fff2b0,#d4af37 45%,#b08d57)!important;-webkit-background-clip:text!important;background-clip:text!important}
+.primary{background:linear-gradient(180deg,#f7e7a8,#d4af37 45%,#b08d57)!important;color:#3d050d!important;border:1px solid #8a6d2f!important;box-shadow:0 8px 20px rgba(176,141,87,.5)!important}
+.wg-card,.wg-feat div,.steps article,.teaser-card{background:linear-gradient(#fffdf6,#fffdf6) padding-box,linear-gradient(135deg,#f7e7a8,#b08d57 30%,#fff8dc 50%,#c2185b 70%,#f7e7a8) border-box!important}
+footer{background:linear-gradient(180deg,#3d050d,#1a0208)!important}
+
+/* V20: Ruby Red is the MAIN theme colour (Feri's choice) — metallic ruby red + brass gold, pink as accent */
+.wg-topstrip{background:linear-gradient(135deg,#7f0e1e,#b3122e 40%,#dc143c 70%,#b08d57)!important}
+.topbar{background:linear-gradient(180deg,#fff8f0,#fbe3e3 60%,#e8c88a)!important;border-bottom:3px solid #b08d57!important}
+.topbar nav a{color:#b3122e!important}
+.wg-profile-opt{background:linear-gradient(160deg,#b3122e,#7f0e1e 60%,#5a0a14)!important}
+.wg-form{background:linear-gradient(180deg,#3d050d,#7f0e1e)!important}
+.live-ticker{background:linear-gradient(90deg,#7f0e1e,#b3122e,#dc143c,#b08d57)!important}
+.wg-strip{background:linear-gradient(90deg,#b3122e,#dc143c)!important}.wg-strip>div{background:linear-gradient(180deg,#a4133c,#7f0e1e)!important}
+.wg-intro{background:linear-gradient(180deg,#fdeef0,#fff8f0 60%,#f7e3c8)!important}
+.wg-intro h2{background:linear-gradient(180deg,#b3122e,#dc143c 55%,#b08d57)!important;-webkit-background-clip:text!important;background-clip:text!important}
+.content-section h2{color:#b3122e!important}
+.wg-hero{background:linear-gradient(180deg,rgba(127,14,30,.15) 0%,rgba(127,14,30,.35) 45%,rgba(61,5,13,.88) 100%),url('/hero-1.jpg') center/cover no-repeat!important}
+footer{background:linear-gradient(180deg,#3d050d,#1a0208)!important}
+
+/* V22: Hero big LANDSCAPE — wide panoramic hero, not tall portrait */
+.wg-hero{min-height:clamp(560px,82vh,820px)!important;aspect-ratio:16/9}
+@media(max-width:900px){.wg-hero{min-height:0!important;aspect-ratio:16/9!important}.wg-hero-headline h1{font-size:clamp(40px,11vw,64px)!important}}
+
+/* V23: Ornate script name as designed image (Burgues-style, ruby red) */
+.brand-name-img{height:54px;width:auto;display:block}
+.hero-name-img{width:min(620px,88vw);height:auto;filter:brightness(1.45) drop-shadow(0 4px 14px rgba(0,0,0,.65))}
+@media(max-width:760px){.brand-name-img{height:40px}.hero-name-img{width:min(420px,92vw)}}
+
+/* V24: TRUE landscape hero + full responsive fix */
+html,body{overflow-x:hidden!important}
+.wg-hero{min-height:0!important;height:82vh!important;aspect-ratio:auto!important}
+.wg-hero-headline h1{font-size:clamp(56px,9vw,110px)!important}
+@media(max-width:900px){
+  .wg-hero{height:auto!important;min-height:560px!important}
+  .wg-hero-row{flex-direction:column!important}
+  .wg-profile-opt,.wg-form{flex:none!important;width:100%!important;max-width:none!important}
+  .wg-hero-headline{margin-bottom:20px}
+  .wg-hero-headline h1{font-size:clamp(40px,12vw,64px)!important}
+  .topbar{flex-wrap:wrap;height:auto!important;padding:10px 4%!important}
+  .topbar nav{display:flex!important;gap:12px!important;overflow-x:auto!important;white-space:nowrap!important;width:100%!important;padding:6px 0;-webkit-overflow-scrolling:touch}
+  .brand-name-img{height:38px!important}
+  .content-section{padding:40px 4%!important}
+  .content-section h2{font-size:26px!important}
+  .wg-intro h2{font-size:30px!important}
+  .wg-services{justify-content:center}
+  .wg-card{width:100%!important;max-width:360px}
+  .teaser-grid,.scroll-grid{grid-template-columns:1fr!important}
+  .steps{grid-template-columns:1fr!important}
+  .feature-strip{grid-template-columns:1fr 1fr!important}
+  .wg-strip{flex-direction:column}
+  .wg-about{flex-direction:column}
+  .form-grid{max-width:100%}
+  footer{flex-direction:column;gap:8px}
+}
+@media(max-width:560px){
+  .wg-hero{min-height:480px!important;padding:28px 4% 20px!important}
+  .live-ticker{font-size:13px!important}
+  .feature-strip{grid-template-columns:1fr!important}
+}
+
+/* V25: Hero is a SHORT wide landscape banner on every screen — profile panel & form move below on mobile */
+.wg-hero{height:62vh!important;min-height:520px!important;max-height:640px!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:24px!important;padding:40px 5%!important}
+.wg-hero-headline{margin-bottom:0!important;text-align:left!important;flex:1;min-width:0}
+.wg-hero-headline h1{font-size:clamp(48px,7vw,96px)!important}
+.wg-hero-row{display:flex!important;gap:24px;justify-content:space-between;padding:28px 5%;background:linear-gradient(180deg,#3d050d,#1a0208)}
+.wg-profile-opt{flex:0 0 260px!important}
+.wg-form{flex:0 0 340px!important}
+@media(max-width:900px){
+  .wg-hero{height:300px!important;min-height:300px!important;max-height:300px!important;flex-direction:column!important;justify-content:center!important;padding:20px 5%!important}
+  .wg-hero-row{flex-direction:column!important;padding:16px 4%!important}
+  .wg-hero-headline{text-align:center!important}
+  .wg-hero-headline h1{font-size:clamp(36px,11vw,56px)!important}
+  .wg-hero-headline .wg-hero-tag{display:none}
+  .wg-hero-row{display:flex!important;flex-direction:column!important;width:100%}
+  .wg-profile-opt{order:2;margin-top:16px}
+  .wg-form{order:3;margin-top:16px}
+  .topbar nav{display:none!important}
+  .topbar{flex-wrap:nowrap!important}
+  .brand-name-img{height:36px!important}
+}
+
+/* V26: New hero cover (Feri's banner) already carries the name — hide the duplicate overlay name */
+.wg-hero-headline h1{display:none}
+.wg-hero-headline{text-align:center}
+.wg-hero{background-position:center 20%!important}
+
+/* V27: Red Velvet metallic theme — deep velvet red with soft metallic sheen + brass gold */
+.wg-topstrip{background:linear-gradient(135deg,#4a060d,#7f0e1e 35%,#a4133c 65%,#b08d57)!important}
+.topbar{background:linear-gradient(180deg,#fff8f0,#fbe9e9 60%,#e8c88a)!important}
+.topbar nav a{color:#7f0e1e!important}
+.wg-profile-opt{background:linear-gradient(160deg,#a4133c,#7f0e1e 55%,#4a060d)!important;box-shadow:0 18px 34px rgba(74,6,13,.45),inset 0 1px 0 rgba(255,255,255,.35)!important}
+.wg-form{background:linear-gradient(180deg,#2a0308,#4a060d 60%,#7f0e1e)!important}
+.live-ticker{background:linear-gradient(90deg,#4a060d,#7f0e1e,#a4133c,#b08d57)!important}
+.wg-strip{background:linear-gradient(90deg,#7f0e1e,#a4133c)!important}.wg-strip>div{background:linear-gradient(180deg,#8b1e2e,#4a060d)!important}
+.wg-intro{background:linear-gradient(180deg,#fdeef0,#fff8f0 60%,#f7e3c8)!important}
+.wg-intro h2{background:linear-gradient(180deg,#7f0e1e,#a4133c 55%,#b08d57)!important;-webkit-background-clip:text!important;background-clip:text!important}
+.content-section h2{color:#7f0e1e!important}
+.wg-hero-row{background:linear-gradient(180deg,#2a0308,#4a060d)!important}
+footer{background:linear-gradient(180deg,#2a0308,#1a0208)!important}
+
+/* V28: CTA buttons moved out of hero into their own cards */
+.wg-cta-cards{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;padding:32px 5%;background:linear-gradient(180deg,#2a0308,#4a060d)}
+.wg-cta-cards .wg-card{width:320px;padding:26px}
+.wg-cta-cards .wg-card p{color:#776b68;line-height:1.8}
+
+/* V30: Hero is ONLY Feri's cover photo — no overlay text, everything else below */
+.wg-hero-headline{display:none!important}
+.wg-hero{height:auto!important;min-height:0!important;max-height:none!important;aspect-ratio:3/2!important;padding:0!important;background:url('/hero-1.jpg') center/cover no-repeat!important}
+@media(max-width:900px){.wg-hero{aspect-ratio:3/2!important;min-height:0!important}}

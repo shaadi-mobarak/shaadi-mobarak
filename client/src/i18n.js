@@ -4,7 +4,7 @@ export const T = {
     heroTitle: 'একটি সুন্দর সম্পর্কের রাজকীয় শুরু', heroSub: 'পরিবারের সম্মতি, আস্থা আর পরিচালকের তত্ত্বাবধানে জীবনসঙ্গী খুঁজে পাওয়ার আয়োজন।',
     viewViaOperator: 'পরিচালকের মাধ্যমে দেখুন', teaserNote: 'টিজারে কোনো নাম, ছবি বা ফোন নম্বর নেই — শুধু বয়স, পেশা, স্থান ও শিক্ষা।',
     packagesTitle: 'মেম্বারশিপ প্যাকেজ', packagesNote: 'দাম অ্যাডমিন প্যানেল থেকে বদলানো যাবে। চূড়ান্ত দাম ক্লায়েন্টের অনুমোদন সাপেক্ষে।',
-    contactUs: 'যোগাযোগ করুন', office: 'অফিস: Mothkhola, Babur Hat, Chandpur Sadar, Chandpur, Bangladesh',
+    contactUs: 'যোগাযোগ করুন', office: 'অফিস: মঠখোলা, বাবুরহাট, চাঁদপুর সদর, চাঁদপুর, বাংলাদেশ',
   },
   en: {
     home: 'Home', about: 'About', bride: 'Brides', groom: 'Grooms', search: 'Search', how: 'How It Works', membership: 'Membership', stories: 'Success Stories', blog: 'Blog', faq: 'FAQ', contact: 'Contact', privacy: 'Privacy', terms: 'Terms', login: 'Login', register: 'Register', dashboard: 'Dashboard', logout: 'Logout',
