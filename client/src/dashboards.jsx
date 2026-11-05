@@ -57,7 +57,7 @@ export function MemberDashboard({ t, user }) {
     <p>{L(t, 'গেটওয়ে (bKash/Nagad/Rocket/SSLCommerz) মার্চেন্ট অনুমোদন ছাড়া চালু নয়।', 'Gateways are disabled until merchant credentials are approved.')}</p>
     <List title={L(t, 'আমার বায়োডাটা', 'My biodata')} items={mine} render={(x) => <span>{x.profileType} · {x.age} · {x.district} · <b>{x.status}</b></span>} />
     <List title={L(t, 'সাজেস্টেড ম্যাচ', 'Suggested matches')} items={sugg} render={(x) => <span>{x.profileType} · {x.age} · {x.profession} · {x.district}</span>} />
-    <List title="Shortlist" items={short} render={(x) => <span>{x.biodata ? `${x.biodata.profileType} · ${x.biodata.age} · ${x.biodata.district}` : '—'} <button onClick={async () => { await api(`/shortlists/${x._id}`, { method: 'DELETE' }); load(); }}>{L(t, 'মুছুন', 'Remove')}</button></span>} />
+    <List title="Shortlist" items={short} render={(x) => <span>{x.biodata ? `${x.biodata.profileType} · ${x.biodata.age} · ${x.biodata.district}` : '—'} <button onClick={async () => { await api(`/shortlists/${x.id || x._id}`, { method: 'DELETE' }); load(); }}>{L(t, 'মুছুন', 'Remove')}</button></span>} />
     <List title={L(t, 'আমার পাঠানো আগ্রহ', 'My sent interests')} items={myInterests} render={(x) => <span>{x.targetBiodata} · <b>{x.status}</b></span>} />
     <List title={L(t, 'আমাকে দেওয়া সম্মতি', 'Consents granted to me')} items={myConsents} render={(x) => <span>{x.scope} · <b>{x.status}</b></span>} />
     <List title={L(t, 'পেমেন্ট ইতিহাস', 'Payment history')} items={payments} render={(x) => <span>{x.method} · ৳{x.amountBDT} · <b>{x.status}</b></span>} />

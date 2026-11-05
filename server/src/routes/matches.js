@@ -4,15 +4,16 @@ import { requireAuth, allowRoles } from '../middleware/auth.js';
 const router = express.Router();
 // Public teaser search + matchmaking filters. Same-religion is a user-selected preference, not a default exclusion.
 // Only published teasers are returned; no name, photo or contact.
+const escapeRegExp = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 router.get('/search', async (req, res, next) => {
   try {
     const q = {};
     if (req.query.profileType) q.profileType = req.query.profileType;
-    if (req.query.district) q.district = new RegExp(req.query.district, 'i');
-    if (req.query.profession) q.profession = new RegExp(req.query.profession, 'i');
-    if (req.query.education) q.education = new RegExp(req.query.education, 'i');
+    if (req.query.district) q.district = new RegExp(escapeRegExp(req.query.district), 'i');
+    if (req.query.profession) q.profession = new RegExp(escapeRegExp(req.query.profession), 'i');
+    if (req.query.education) q.education = new RegExp(escapeRegExp(req.query.education), 'i');
     if (req.query.maritalStatus) q.maritalStatus = req.query.maritalStatus;
-    if (req.query.religion) q.religion = new RegExp(`^${req.query.religion}$`, 'i');
+    if (req.query.religion) q.religion = new RegExp(`^${escapeRegExp(req.query.religion)}$`, 'i');
     if (req.query.minAge || req.query.maxAge) { q.age = {}; if (req.query.minAge) q.age.$gte = Number(req.query.minAge); if (req.query.maxAge) q.age.$lte = Number(req.query.maxAge); }
     if (req.query.minHeight || req.query.maxHeight) { q.heightCm = {}; if (req.query.minHeight) q.heightCm.$gte = Number(req.query.minHeight); if (req.query.maxHeight) q.heightCm.$lte = Number(req.query.maxHeight); }
     q.status = 'published';

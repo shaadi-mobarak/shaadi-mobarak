@@ -23,6 +23,7 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 const app = express();
+app.set('trust proxy', 1); // Render terminates TLS behind a proxy; rate-limit needs the real client IP.
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const clientDist = path.join(__dirname, '..', '..', 'client', 'dist');
 if (process.env.NODE_ENV === 'production' && fs.existsSync(clientDist)) {
