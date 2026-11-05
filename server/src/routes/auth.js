@@ -25,6 +25,18 @@ router.post('/register', async (req, res, next) => {
     res.status(201).json({ message: 'Registration received. Account activation is pending.', user: { id: user.id, fullName: user.fullName, email: user.email, role: user.role, accountStatus: user.accountStatus } });
   } catch (e) { next(e); }
 });
+router.post('/setup-owner', async (req, res, next) => {
+  try {
+    const parsed = registerSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ message: 'Please check the submitted information', errors: parsed.error.flatten() });
+    const { fullName, email, password } = parsed.data;
+    if (await User.exists({ role: 'owner' })) return res.status(409).json({ message: 'An owner account already exists' });
+    if (await User.exists({ email: email.toLowerCase() })) return res.status(409).json({ message: 'An account with this email already exists' });
+    const passwordHash = await bcrypt.hash(password, 12);
+    const user = await User.create({ fullName, email: email.toLowerCase(), passwordHash, role: 'owner', accountStatus: 'active', emailVerified: true });
+    res.status(201).json({ message: 'Owner account created. You can now log in.', user: { id: user.id, fullName: user.fullName, email: user.email, role: user.role } });
+  } catch (e) { next(e); }
+});
 router.post('/login', async (req, res, next) => {
   try {
     const parsed = loginSchema.safeParse(req.body);

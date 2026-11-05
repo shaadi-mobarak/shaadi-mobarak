@@ -2,7 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { api } from './api.js';
 import { T } from './i18n.js';
-import { Home, About, ProfileList, ProfileDetails, SearchPage, HowPage, MembershipPage, StoriesPage, ContentPage, ContactPage, PolicyPage, AuthPage } from './pages.jsx';
+import { Home, About, ProfileList, ProfileDetails, SearchPage, HowPage, MembershipPage, StoriesPage, ContentPage, ContactPage, PolicyPage, AuthPage, SetupOwnerPage } from './pages.jsx';
 import { MemberDashboard, MatchmakerDashboard, AdminDashboard } from './dashboards.jsx';
 import './styles.css';
 
@@ -47,6 +47,7 @@ function App() {
   else if (p === 'privacy') body = <PolicyPage t={t} kind="privacy" />;
   else if (p === 'terms') body = <PolicyPage t={t} kind="terms" />;
   else if (p === 'login') body = <AuthPage t={t} mode="login" onDone={refreshUser} />;
+  else if (p === 'setup-owner') body = <SetupOwnerPage t={t} go={go} />;
   else if (p === 'register') body = <AuthPage t={t} mode="register" onDone={() => go('login')} />;
   else if (p === 'dashboard') body = !user ? <AuthPage t={t} mode="login" onDone={refreshUser} /> : user.role === 'matchmaker' ? <MatchmakerDashboard t={t} /> : (user.role === 'admin' || user.role === 'owner') ? <AdminDashboard t={t} /> : <MemberDashboard t={t} user={user} />;
   else body = <Home t={t} go={go} />;
