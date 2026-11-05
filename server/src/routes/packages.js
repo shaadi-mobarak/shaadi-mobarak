@@ -6,7 +6,9 @@ async function ensureSeeded() {
   if ((await Package.countDocuments()) === 0) await Package.insertMany(DEFAULT_PACKAGES);
 }
 router.get('/', async (_req, res) => { await ensureSeeded(); const packages = await Package.find({ isActive: true }).sort('sortOrder'); res.json({ packages }); });
-router.post('/', requireAuth, allowRoles('admin', 'owner'), async (req, res) => { const p = await Package.create(req.body); res.status(201).json({ package: p }); });
-router.patch('/:id', requireAuth, allowRoles('admin', 'owner'), async (req, res) => { const p = await Package.findByIdAndUpdate(req.params.id, req.body, { new: true }); if (!p) return res.status(404).json({ message: 'Package not found' }); res.json({ package: p }); });
+const PKG_FIELDS = ['name', 'priceBDT', 'durationDays', 'proposals', 'meetings', 'features', 'isActive', 'sortOrder'];
+function pickPkg(body) { const out = {}; for (const k of PKG_FIELDS) if (body[k] !== undefined) out[k] = body[k]; return out; }
+router.post('/', requireAuth, allowRoles('admin', 'owner'), async (req, res) => { const p = await Package.create(pickPkg(req.body)); res.status(201).json({ package: p }); });
+router.patch('/:id', requireAuth, allowRoles('admin', 'owner'), async (req, res) => { const p = await Package.findByIdAndUpdate(req.params.id, pickPkg(req.body), { new: true, runValidators: true }); if (!p) return res.status(404).json({ message: 'Package not found' }); res.json({ package: p }); });
 router.delete('/:id', requireAuth, allowRoles('admin', 'owner'), async (req, res) => { await Package.findByIdAndDelete(req.params.id); res.json({ message: 'Deleted' }); });
 export default router;

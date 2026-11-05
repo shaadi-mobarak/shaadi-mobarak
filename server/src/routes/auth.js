@@ -37,7 +37,7 @@ router.post('/login', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 router.get('/me', requireAuth, async (req, res, next) => {
-  try { const user = await User.findById(req.auth.sub).select('fullName email role accountStatus emailVerified'); if (!user) return res.status(401).json({ message: 'Account not found' }); res.json({ user }); }
+  try { const user = await User.findById(req.auth.sub).select('fullName email role accountStatus emailVerified phone phoneVerified privacy partnerPreferences'); if (!user) return res.status(401).json({ message: 'Account not found' }); res.json({ user }); }
   catch (e) { next(e); }
 });
 // OTP architecture: a 6-digit code is hashed and stored with expiry. No SMS/email provider is

@@ -11,6 +11,6 @@ const userSchema = new mongoose.Schema({
   otpHash: { type: String, select: false },
   otpExpiresAt: { type: Date, default: null },
   privacy: { showPhotoTo: { type: String, enum: ['operator_only','approved_families'], default: 'operator_only' }, showContactTo: { type: String, enum: ['operator_only','approved_families'], default: 'operator_only' } },
-  partnerPreferences: { minAge: Number, maxAge: Number, district: String, religion: String, education: String }
+  partnerPreferences: { minAge: Number, maxAge: Number, district: String, profession: String, religion: String, education: String }
 }, { timestamps: true, versionKey: false });
 export default mongoose.model('User', userSchema);

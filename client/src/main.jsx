@@ -40,7 +40,7 @@ function App() {
   else if (p === 'details') body = <ProfileDetails t={t} id={route.param} user={user} go={go} />;
   else if (p === 'search') body = <SearchPage t={t} go={go} />;
   else if (p === 'how') body = <HowPage t={t} />;
-  else if (p === 'membership') body = <MembershipPage t={t} />;
+  else if (p === 'membership') body = <MembershipPage t={t} go={go} />;
   else if (p === 'stories') body = <StoriesPage t={t} />;
   else if (p === 'blog') body = <ContentPage t={t} type="blog" />;
   else if (p === 'faq') body = <ContentPage t={t} type="faq" />;
