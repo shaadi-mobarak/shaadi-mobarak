@@ -20,6 +20,7 @@ import membershipsRoutes from './routes/memberships.js';
 import followupsRoutes from './routes/followups.js';
 import uploadsRoutes from './routes/uploads.js';
 import SiteSetting from './models/SiteSetting.js';
+import { getStorageDriver } from './utils/storage.js';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -39,7 +40,7 @@ app.use(cookieParser());
 app.use('/api/auth', rateLimit({ windowMs: 15 * 60 * 1000, limit: 30, standardHeaders: 'draft-7', legacyHeaders: false }), authRoutes);
 app.use('/api/health', healthRoutes);
 // Public site status (always reachable, so the frontend can show a maintenance banner).
-app.get('/api/site-status', async (_req, res) => { try { const s = await SiteSetting.findOne({ key: 'maintenanceMode' }); res.json({ maintenance: s ? String(s.value).trim().toLowerCase() === 'true' : false }); } catch { res.json({ maintenance: false }); } });
+app.get('/api/site-status', async (_req, res) => { try { const s = await SiteSetting.findOne({ key: 'maintenanceMode' }); res.json({ maintenance: s ? String(s.value).trim().toLowerCase() === 'true' : false, storage: { driver: getStorageDriver(), persistent: false } }); } catch { res.json({ maintenance: false, storage: { driver: 'local', persistent: false } }); } });
 // Maintenance mode (owner setting key "maintenanceMode" = "true"):
 // public API calls return 503; health, site-status, auth and admin stay reachable
 // so the owner can log in and switch it off again. Fails open if the DB is unreachable.

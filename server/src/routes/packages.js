@@ -4,6 +4,11 @@ import { requireAuth, allowRoles } from '../middleware/auth.js';
 const router = express.Router();
 async function ensureSeeded() {
   if ((await Package.countDocuments()) === 0) await Package.insertMany(DEFAULT_PACKAGES);
+  // Royal was added to DEFAULT_PACKAGES after the live DB was seeded, and the
+  // seeder above only runs on an empty collection. Upsert Royal only: never touch
+  // any existing package (live prices may have been changed deliberately by the owner).
+  const royal = DEFAULT_PACKAGES.find((p) => p.name === 'Royal');
+  if (royal) await Package.updateOne({ name: 'Royal' }, { $setOnInsert: royal }, { upsert: true });
 }
 router.get('/', async (_req, res) => { await ensureSeeded(); const packages = await Package.find({ isActive: true }).sort('sortOrder'); res.json({ packages }); });
 const PKG_FIELDS = ['name', 'priceBDT', 'durationDays', 'proposals', 'meetings', 'features', 'isActive', 'sortOrder'];

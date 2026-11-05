@@ -172,6 +172,50 @@ r = await call('GET', '/packages');
 check('public API works again after maintenance off', r.status === 200);
 r = await call('DELETE', '/admin/settings/maintenanceMode', null, ownerCookie);
 check('maintenance setting cleaned up', r.status === 200);
+// --- v38: Royal upsert (never touches existing packages) ---
+r = await call('GET', '/packages');
+const royal = (r.data.packages || []).filter((p) => p.name === 'Royal');
+check('Royal package upserted with owner-approved values', r.status === 200 && royal.length === 1 && royal[0].priceBDT === 20000 && royal[0].durationDays === 365 && royal[0].proposals === 150 && royal[0].meetings === 30);
+r = await call('GET', '/packages');
+check('Royal not duplicated on repeated load', (r.data.packages || []).filter((p) => p.name === 'Royal').length === 1);
+// --- v38: gateways honestly disabled without credentials ---
+r = await call('GET', '/payments/gateways');
+check('gateways endpoint lists all disabled without credentials', r.status === 200 && Array.isArray(r.data.gateways) && r.data.gateways.length === 4 && r.data.gateways.every((g) => g.enabled === false));
+// --- v38: site-status reports local (non-persistent) storage ---
+r = await call('GET', '/site-status');
+check('site-status reports local non-persistent storage', r.status === 200 && r.data.storage && r.data.storage.driver === 'local' && r.data.storage.persistent === false);
+// --- v38: OTP gated without provider ---
+r = await call('GET', '/auth/otp-status');
+check('otp-status reports unconfigured without provider', r.status === 200 && r.data.configured === false && r.data.channel === null);
+r = await call('POST', '/auth/otp/request', {}, memberCookie);
+check('OTP request without provider returns 503, no code', r.status === 503 && !JSON.stringify(r.data).match(/\b\d{6}\b/));
+r = await call('POST', '/auth/otp/verify', { code: '123456' }, memberCookie);
+check('OTP verify without request rejected', r.status === 400);
+// --- v38: OTP full flow with test provider (test-only, never in production) ---
+process.env.OTP_TEST_MODE = 'test';
+const { testOutbox } = await import('../src/utils/otpProvider.js');
+r = await call('GET', '/auth/otp-status');
+check('otp-status reports configured in test mode', r.status === 200 && r.data.configured === true && r.data.channel === 'email');
+r = await call('POST', '/auth/otp/request', {}, memberCookie);
+check('OTP request succeeds in test mode', r.status === 200 && testOutbox.length === 1 && !JSON.stringify(r.data).match(/\b\d{6}\b/));
+const testCode = testOutbox[0].code;
+r = await call('POST', '/auth/otp/verify', { code: '000000' }, memberCookie);
+check('wrong OTP rejected', r.status === 400);
+r = await call('POST', '/auth/otp/verify', { code: testCode }, memberCookie);
+check('correct OTP verifies phone', r.status === 200);
+r = await call('GET', '/auth/me', null, memberCookie);
+check('phoneVerified true after OTP verify', r.status === 200 && r.data.user.phoneVerified === true);
+// Expired code: force expiry directly, then verify must fail.
+await User.updateOne({ email: 'member@test.local' }, { otpHash: await bcrypt.hash('999999', 10), otpExpiresAt: new Date(Date.now() - 1000), otpAttempts: 0 });
+r = await call('POST', '/auth/otp/verify', { code: '999999' }, memberCookie);
+check('expired OTP rejected', r.status === 400);
+// Too many wrong attempts lock the code out.
+await User.updateOne({ email: 'member@test.local' }, { otpHash: await bcrypt.hash('111111', 10), otpExpiresAt: new Date(Date.now() + 600000), otpAttempts: 0 });
+for (let i = 0; i < 5; i++) await call('POST', '/auth/otp/verify', { code: '222222' }, memberCookie);
+r = await call('POST', '/auth/otp/verify', { code: '111111' }, memberCookie);
+check('OTP locked after 5 wrong attempts', r.status === 400);
+await User.updateOne({ email: 'member@test.local' }, { otpHash: undefined, otpExpiresAt: null, otpAttempts: 0 });
+delete process.env.OTP_TEST_MODE;
 r = await call('POST', '/auth/logout', {}, memberCookie);
 check('logout works', r.status === 200);
 r = await call('GET', '/auth/me');

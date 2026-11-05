@@ -10,6 +10,8 @@ const userSchema = new mongoose.Schema({
   emailVerified: { type: Boolean, default: false },
   otpHash: { type: String, select: false },
   otpExpiresAt: { type: Date, default: null },
+  otpAttempts: { type: Number, default: 0 },
+  otpRequestedAt: { type: Date, default: null },
   privacy: { showPhotoTo: { type: String, enum: ['operator_only','approved_families'], default: 'operator_only' }, showContactTo: { type: String, enum: ['operator_only','approved_families'], default: 'operator_only' } },
   partnerPreferences: { minAge: Number, maxAge: Number, district: String, profession: String, religion: String, education: String }
 }, { timestamps: true, versionKey: false });
