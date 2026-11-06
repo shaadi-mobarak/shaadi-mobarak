@@ -10,7 +10,7 @@ export const DEFAULT_PACKAGES = [
   { name: 'Royal', priceBDT: 20000, durationDays: 365, proposals: 150, meetings: 30, features: ['ভিআইপি পার্সোনাল ম্যাচমেকার', 'অফলাইন সাপোর্ট', 'সর্বোচ্চ অগ্রাধিকার', 'ফ্যামিলি মিটিং ব্যবস্থা'], sortOrder: 6 },
 ];
 const packageSchema = new mongoose.Schema({
-  name: { type: String, required: true, trim: true },
+  name: { type: String, required: true, trim: true, unique: true },
   priceBDT: { type: Number, required: true, min: 0 },
   durationDays: { type: Number, required: true, min: 1 },
   proposals: { type: Number, default: 0, min: 0 },

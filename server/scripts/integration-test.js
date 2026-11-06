@@ -113,10 +113,10 @@ r = await call('PATCH', `/packages/${pkgId}`, { name: 'Silver Plus', priceBDT: 2
 check('admin package full edit', r.status === 200 && r.data.package.name === 'Silver Plus' && r.data.package.priceBDT === 2500 && r.data.package.durationDays === 120 && r.data.package.features.length === 2);
 r = await call('GET', '/packages');
 check('deactivated package hidden from public list', r.status === 200 && !r.data.packages.some((x) => x.name === 'Silver Plus'));
-r = await call('PATCH', `/packages/${pkgId}`, { isActive: true, name: 'Silver' }, ownerCookie);
-check('package reactivated', r.status === 200 && r.data.package.isActive === true);
+r = await call('PATCH', `/packages/${pkgId}`, { isActive: true }, ownerCookie);
+check('package reactivated', r.status === 200 && r.data.package.isActive === true && r.data.package.name === 'Silver Plus');
 r = await call('GET', '/packages');
-check('reactivated package visible again', r.status === 200 && r.data.packages.some((x) => x.name === 'Silver'));
+check('reactivated package visible again', r.status === 200 && r.data.packages.some((x) => x.name === 'Silver Plus'));
 r = await call('POST', '/support', { name: 'Member One', email: 'member@test.local', subject: 'Reply test', message: 'Please reply to this ticket' });
 const ticketId = r.data.ticket._id;
 r = await call('PATCH', `/support/${ticketId}`, { staffReply: 'We will call you tomorrow.', status: 'in_progress' }, ownerCookie);
@@ -228,10 +228,202 @@ r = await call('POST', '/auth/otp/verify', { code: '111111' }, memberCookie);
 check('OTP locked after 5 wrong attempts', r.status === 400);
 await User.updateOne({ email: 'member@test.local' }, { otpHash: undefined, otpExpiresAt: null, otpAttempts: 0 });
 delete process.env.OTP_TEST_MODE;
+// --- v40 backend hardening: bad ids, injection, mass-assignment, validation ---
+r = await call('GET', '/biodata/not-an-id', null, ownerCookie);
+check('invalid biodata id returns 400, not 500', r.status === 400);
+r = await call('PATCH', '/packages/not-an-id', { priceBDT: 1 }, ownerCookie);
+check('invalid package id returns 400, not 500', r.status === 400);
+// Mass-assignment check needs a genuine plain member: the suite's member was
+// promoted to matchmaker earlier, and (since F-03) their token now correctly
+// carries the current DB role — so a fresh member is used here instead.
+const memberTwo = await User.create({ fullName: 'Member Two', email: 'member2@test.local', passwordHash: await bcrypt.hash('Member2Password123', 12), role: 'member', accountStatus: 'active' });
+r = await call('POST', '/auth/login', { email: 'member2@test.local', password: 'Member2Password123' });
+const memberTwoCookie = r.cookie;
+check('second member login works', r.status === 200 && !!memberTwoCookie);
+r = await call('POST', '/biodata', { profileType: 'groom', age: 30, profession: 'Tester', district: 'Dhaka', status: 'published', photos: ['someone-elses-photo.png'], createdByOperator: true }, memberTwoCookie);
+check('biodata create ignores injected status/photos/operator flag', r.status === 201 && r.data.biodata.status === 'pending' && Array.isArray(r.data.biodata.photos) && r.data.biodata.photos.length === 0 && r.data.biodata.createdByOperator === false);
+const pendingBioId = r.data.biodata._id;
+r = await call('POST', '/biodata', { profileType: 'groom', age: 'not-a-number' }, memberCookie);
+check('biodata create with bad age returns 400, not 500', r.status === 400);
+r = await call('GET', '/matches/search?profileType[$ne]=bride');
+check('search NoSQL injection attempt rejected (400)', r.status === 400);
+r = await call('GET', '/matches/search?minAge=abc&profileType=bride');
+check('search with non-numeric age does not crash (200)', r.status === 200);
+r = await call('GET', '/biodata?status[$ne]=published', null, ownerCookie);
+check('biodata list status injection rejected (400)', r.status === 400);
+r = await call('POST', '/interests', { targetBiodata: bioId, message: 'Again' }, memberCookie);
+check('duplicate open interest rejected (409)', r.status === 409);
+r = await call('POST', '/interests', { targetBiodata: '000000000000000000000000', message: 'Hi' }, memberCookie);
+check('interest to missing biodata returns 404', r.status === 404);
+r = await call('POST', '/shortlists', { biodata: pendingBioId }, memberCookie);
+check('shortlist of unpublished biodata rejected (400)', r.status === 400);
+r = await call('POST', '/payments', { package: pkgId, method: 'Bitcoin', transactionId: 'X1' }, memberCookie);
+check('payment with invalid method rejected (400)', r.status === 400);
+await call('PATCH', `/packages/${pkgId}`, { isActive: false }, ownerCookie);
+r = await call('POST', '/payments', { package: pkgId, method: 'bKash', transactionId: 'X2' }, memberCookie);
+check('payment for inactive package rejected (400)', r.status === 400);
+await call('PATCH', `/packages/${pkgId}`, { isActive: true }, ownerCookie);
+r = await call('PATCH', `/payments/${payId}`, { status: 'hacked' }, ownerCookie);
+check('payment status injection rejected (400)', r.status === 400);
+r = await call('PATCH', `/payments/${payId}`, { status: 'refunded' }, ownerCookie);
+check('approved payment can be refunded', r.status === 200 && r.data.payment.status === 'refunded');
+r = await call('GET', '/memberships/mine', null, memberCookie);
+check('refunded payment cancels its membership', r.status === 200 && r.data.memberships.length === 1 && r.data.memberships[0].status === 'cancelled');
+r = await call('POST', '/auth/otp/verify', { code: '123' }, memberCookie);
+check('OTP verify rejects non-6-digit code (400)', r.status === 400);
+r = await call('POST', '/auth/otp/verify', { code: 123456 }, memberCookie);
+check('OTP verify rejects non-string code (400)', r.status === 400);
+r = await call('PATCH', '/auth/me', { privacy: { showPhotoTo: 'everyone' } }, memberCookie);
+check('profile update rejects invalid privacy value (400)', r.status === 400);
+r = await call('PATCH', '/auth/me', { partnerPreferences: { minAge: 5 } }, memberCookie);
+check('profile update rejects out-of-range preference (400)', r.status === 400);
+r = await call('DELETE', '/auth/me', null, ownerCookie);
+check('owner cannot delete own account via /me (403)', r.status === 403);
+r = await call('POST', '/admin/settings', { key: '', value: 'x' }, ownerCookie);
+check('settings save rejects empty key (400)', r.status === 400);
+r = await call('POST', '/admin/settings', { key: 'k'.repeat(101), value: 'x' }, ownerCookie);
+check('settings save rejects oversized key (400)', r.status === 400);
+// Fake image upload: correct MIME header but plain-text bytes must be rejected.
+{
+  const fd = new FormData(); fd.append('photo', new Blob(['this is not an image at all'], { type: 'image/png' }), 'fake.png'); fd.append('biodataId', String(bioId));
+  const up = await fetch(base + '/uploads', { method: 'POST', headers: { Cookie: memberCookie }, body: fd });
+  check('upload of non-image bytes rejected (400)', up.status === 400);
+  const fd2 = new FormData(); fd2.append('photo', new Blob(['not an image'], { type: 'text/plain' }), 'evil.txt'); fd2.append('biodataId', String(bioId));
+  const up2 = await fetch(base + '/uploads', { method: 'POST', headers: { Cookie: memberCookie }, body: fd2 });
+  check('upload of disallowed MIME type rejected (400)', up2.status === 400);
+}
+// Content PATCH must ignore unknown fields and validate.
+{
+  let all = await call('GET', '/content/all', null, ownerCookie);
+  if (!all.data.items || all.data.items.length === 0) { await call('POST', '/content', { type: 'faq', title: 'Test FAQ 2', body: 'Answer 2' }, ownerCookie); all = await call('GET', '/content/all', null, ownerCookie); }
+  const cid = all.data.items[0]._id;
+  r = await call('PATCH', `/content/${cid}`, { title: 'Updated FAQ', isActive: false, _id: '000000000000000000000000', createdAt: '2000-01-01' }, ownerCookie);
+  check('content edit applies whitelisted fields only', r.status === 200 && r.data.item.title === 'Updated FAQ' && r.data.item.isActive === false && String(r.data.item._id) === String(cid));
+  r = await call('GET', '/content?type=faq');
+  check('deactivated content hidden from public list', r.status === 200 && !r.data.items.some((x) => String(x._id) === String(cid)));
+}
+// Duplicate registration race returns 409, not 500.
+r = await call('POST', '/auth/register', { fullName: 'Member One', email: 'member@test.local', password: 'AnotherPass123' });
+check('duplicate registration returns 409', r.status === 409);
+// Malformed JSON body returns 400, not 500.
+{
+  const bad = await fetch(base + '/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{bad json' });
+  check('malformed JSON returns 400', bad.status === 400);
+}
 r = await call('POST', '/auth/logout', {}, memberCookie);
 check('logout works', r.status === 200);
 r = await call('GET', '/auth/me');
 check('me without session blocked (401)', r.status === 401);
+// --- v40 consolidation: owner protection (F-01) + no-change PATCH (F-24) ---
+const adminUser = await User.create({ fullName: 'Admin One', email: 'admin@test.local', passwordHash: await bcrypt.hash('AdminPassword123', 12), role: 'admin', accountStatus: 'active' });
+r = await call('POST', '/auth/login', { email: 'admin@test.local', password: 'AdminPassword123' });
+check('admin login works', r.status === 200 && !!r.cookie);
+const adminCookie = r.cookie;
+r = await call('PATCH', `/admin/users/${owner._id}`, { role: 'member' }, adminCookie);
+check('admin cannot demote the owner (403)', r.status === 403);
+r = await call('PATCH', `/admin/users/${owner._id}`, { accountStatus: 'suspended' }, adminCookie);
+check('admin cannot suspend the owner (403)', r.status === 403);
+r = await call('GET', '/auth/me', null, ownerCookie);
+check('owner still active after blocked demote/suspend', r.status === 200 && r.data.user.role === 'owner');
+r = await call('PATCH', `/admin/users/${member._id}`, { accountStatus: 'active' }, ownerCookie);
+check('owner can still edit a member (200)', r.status === 200);
+r = await call('PATCH', `/admin/users/${member._id}`, { nickname: 'Nope' }, ownerCookie);
+check('admin user PATCH with no valid change returns 400', r.status === 400);
+// --- v40 consolidation: JWT re-validation (F-03) ---
+r = await call('PATCH', `/admin/users/${member._id}`, { accountStatus: 'suspended' }, ownerCookie);
+check('owner suspends member', r.status === 200);
+r = await call('GET', '/auth/me', null, memberCookie);
+check('suspended member token rejected (401)', r.status === 401);
+r = await call('GET', '/notifications', null, memberCookie);
+check('suspended member cannot use other routes (401)', r.status === 401);
+r = await call('PATCH', `/admin/users/${member._id}`, { accountStatus: 'active' }, ownerCookie);
+check('owner reactivates member', r.status === 200);
+r = await call('GET', '/auth/me', null, memberCookie);
+check('reactivated member token works again (200)', r.status === 200);
+const tempUser = await User.create({ fullName: 'Temp User', email: 'temp@test.local', passwordHash: await bcrypt.hash('TempPassword123', 12), role: 'member', accountStatus: 'active' });
+r = await call('POST', '/auth/login', { email: 'temp@test.local', password: 'TempPassword123' });
+const tempCookie = r.cookie;
+check('temp user login works', r.status === 200 && !!tempCookie);
+r = await call('DELETE', `/admin/users/${tempUser._id}`, null, ownerCookie);
+check('admin deletes temp user', r.status === 200);
+r = await call('GET', '/auth/me', null, tempCookie);
+check('deleted user token rejected (401)', r.status === 401);
+const adminTwo = await User.create({ fullName: 'Admin Two', email: 'admin2@test.local', passwordHash: await bcrypt.hash('Admin2Password123', 12), role: 'admin', accountStatus: 'active' });
+r = await call('POST', '/auth/login', { email: 'admin2@test.local', password: 'Admin2Password123' });
+const adminTwoCookie = r.cookie;
+check('second admin login works', r.status === 200 && !!adminTwoCookie);
+r = await call('PATCH', `/admin/users/${adminTwo._id}`, { role: 'member' }, ownerCookie);
+check('owner demotes second admin', r.status === 200 && r.data.user.role === 'member');
+r = await call('GET', '/admin/users', null, adminTwoCookie);
+check('demoted admin token loses admin access (403)', r.status === 403);
+// --- v40 consolidation: oversize payload (F-06) ---
+{
+  const big = await fetch(base + '/support', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: 'Big', email: 'big@test.local', subject: 'Big', message: 'x'.repeat(150 * 1024) }) });
+  check('oversize JSON payload returns 413', big.status === 413);
+}
+// --- v40 consolidation: unique package name + idempotent seeding (F-09) ---
+await Package.init();
+r = await call('POST', '/packages', { name: 'Silver', priceBDT: 100, durationDays: 30 }, ownerCookie);
+check('duplicate package name rejected (409)', r.status === 409);
+r = await call('GET', '/packages');
+check('packages still seeded once each', r.status === 200 && (r.data.packages || []).filter((p) => p.name === 'Silver').length === 1);
+// --- v40 consolidation: unique content slug (F-23) ---
+const Content = (await import('../src/models/Content.js')).default;
+await Content.init();
+r = await call('POST', '/content', { type: 'faq', title: 'Slug One', slug: 'dup-slug', body: 'First' }, ownerCookie);
+check('content with slug created', r.status === 201);
+r = await call('POST', '/content', { type: 'faq', title: 'Slug Two', slug: 'dup-slug', body: 'Second' }, ownerCookie);
+check('duplicate content slug rejected (409)', r.status === 409);
+// --- v40 consolidation: shortlist delete (F-25) ---
+r = await call('GET', '/shortlists', null, memberCookie);
+const shortId = r.data.shortlists && r.data.shortlists[0] ? r.data.shortlists[0].id : null;
+check('shortlist list readable', r.status === 200 && !!shortId);
+r = await call('DELETE', `/shortlists/${shortId}`, null, memberCookie);
+check('deleting own shortlist works (200)', r.status === 200);
+r = await call('DELETE', `/shortlists/${shortId}`, null, memberCookie);
+check('deleting already-deleted shortlist returns 404', r.status === 404);
+r = await call('DELETE', '/shortlists/000000000000000000000000', null, memberCookie);
+check('deleting missing shortlist returns 404', r.status === 404);
+// --- v40 consolidation: upload requires biodataId (F-19) ---
+{
+  const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
+  const fd = new FormData(); fd.append('photo', new Blob([png], { type: 'image/png' }), 'orphan.png');
+  const up = await fetch(base + '/uploads', { method: 'POST', headers: { Cookie: memberCookie }, body: fd });
+  check('upload without biodataId rejected (400)', up.status === 400);
+}
+// --- v40 consolidation: publish needs complete biodata (F-29) ---
+r = await call('POST', '/biodata', { profileType: 'bride' }, memberCookie);
+check('minimal biodata created pending', r.status === 201);
+const minimalBioId = r.data.biodata._id;
+r = await call('PATCH', `/biodata/${minimalBioId}/status`, { status: 'published' }, ownerCookie);
+check('incomplete biodata cannot be published (400)', r.status === 400);
+r = await call('POST', '/biodata', { profileType: 'groom', age: 29, profession: 'Engineer', district: 'Dhaka', education: 'BSc' }, memberCookie);
+const completeBioId = r.data.biodata._id;
+r = await call('PATCH', `/biodata/${completeBioId}/status`, { status: 'published' }, ownerCookie);
+check('complete biodata can still be published (200)', r.status === 200 && r.data.biodata.status === 'published');
+// --- v40 consolidation: admin delete cascades biodata (F-28) ---
+const doomed = await User.create({ fullName: 'Doomed User', email: 'doomed@test.local', passwordHash: await bcrypt.hash('DoomedPassword123', 12), role: 'member', accountStatus: 'active' });
+r = await call('POST', '/auth/login', { email: 'doomed@test.local', password: 'DoomedPassword123' });
+const doomedCookie = r.cookie;
+r = await call('POST', '/biodata', { profileType: 'groom', age: 31, profession: 'Farmer', district: 'Chandpur', education: 'HSC' }, doomedCookie);
+const doomedBioId = r.data.biodata._id;
+r = await call('PATCH', `/biodata/${doomedBioId}/status`, { status: 'published' }, ownerCookie);
+check('doomed user biodata published', r.status === 200);
+r = await call('GET', '/biodata/teasers');
+check('doomed teaser visible before delete', r.status === 200 && r.data.teasers.some((t) => String(t.id) === String(doomedBioId)));
+r = await call('DELETE', `/admin/users/${doomed._id}`, null, ownerCookie);
+check('admin deletes doomed user', r.status === 200);
+r = await call('GET', '/biodata/teasers');
+check('deleted user biodata no longer published', r.status === 200 && !r.data.teasers.some((t) => String(t.id) === String(doomedBioId)));
+// --- v40 consolidation: rate limits split (F-02) — runs last: nothing after this needs /auth ---
+{
+  let ok = 0;
+  for (let i = 0; i < 40; i++) { const m = await call('GET', '/auth/me', null, memberCookie); if (m.status === 200) ok++; }
+  check('40 sequential session checks all succeed (200)', ok === 40);
+  let limited = false;
+  for (let i = 0; i < 40; i++) { const b = await call('POST', '/auth/login', { email: 'member@test.local', password: 'WrongPassword999' }); if (b.status === 429) { limited = true; break; } }
+  check('login still rate-limited after many bad attempts (429)', limited === true);
+}
 console.log(`\n${passed} passed, ${failed} failed`);
 server.close(); await mongoose.disconnect(); await mongod.stop();
 process.exit(failed ? 1 : 0);
